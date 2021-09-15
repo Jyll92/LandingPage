@@ -2,8 +2,6 @@ var canvas = document.querySelector(".starfield");
 const ctx = canvas.getContext("2d");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
-// canvas.width = document.documentElement.offsetWidth;
-// canvas.height = document.documentElement.offsetHeight;
 
 // constants
 const COLOR_SPACE = "#000000FF";
@@ -11,15 +9,9 @@ const COLOR_STARS = "white";
 const STAR_NUM = 200; // number of stars in the starfield
 const STAR_SIZE = 0.005; // max star size as a fraction of screen width
 const STAR_SPEED = 0.05; // fraction of screen width per second
+const FPS = 90; // Frames Per Sec
 
-// set up the canvas and context
-// var canvas = document.createElement("canvas");
-// var ctx = canvas.getContext("2d");
-// canvas.height = document.documentElement.clientHeight;
-// canvas.width = document.documentElement.clientWidth;
-// document.body.appendChild(canvas);
-
-// set up the stars
+// Set up the stars
 var stars = [];
 var starSpeed = STAR_SPEED * canvas.width;
 var xv = starSpeed * randomSign() * Math.random();
@@ -36,17 +28,16 @@ for (let i = 0; i < STAR_NUM; i++) {
     }
 }
 
-// set up the animation loop
-var timeDelta, timeLast = 0;
-requestAnimationFrame(loop);
 
-function loop(timeNow) {
 
-    // calculate the time difference
-    timeDelta = timeNow - timeLast;
-    timeLast = timeNow;
+function randomSign() {
+    return Math.random() >= 0.5 ? 1 : -1;
+}
 
-    // space background
+// Animation Time
+setInterval(update, 1000 / FPS);
+
+function update() {
     ctx.fillStyle = COLOR_SPACE;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -58,7 +49,7 @@ function loop(timeNow) {
         ctx.fill();
 
         // update the star's x position
-        stars[i].x += stars[i].xv * timeDelta * 0.001;
+        stars[i].x += stars[i].xv / FPS;
 
         // reposition the star to the other side if it goes off screen
         if (stars[i].x < 0 - stars[i].r) {
@@ -68,7 +59,7 @@ function loop(timeNow) {
         }
         
         // update the star's y position
-        stars[i].y += stars[i].yv * timeDelta * 0.001;
+        stars[i].y += stars[i].yv / FPS;
 
         // reposition the star to the other side if it goes off screen
         if (stars[i].y < 0 - stars[i].r) {
@@ -77,11 +68,4 @@ function loop(timeNow) {
             stars[i].y = 0 - stars[i].r;
         }
     }
-
-    // call the next frame
-    requestAnimationFrame(loop);
-}
-
-function randomSign() {
-    return Math.random() >= 0.5 ? 1 : -1;
 }
